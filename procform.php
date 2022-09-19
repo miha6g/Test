@@ -54,7 +54,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
     if(count($error) > 0) {
         echo json_encode($response);
         http_response_code(422);
-        exit;
+        die('Unprocessable Entity');
     }
     try {
 
@@ -89,6 +89,10 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
         http_response_code(500);
         die('Internal Server Error');
     }
+    
+    echo json_encode($response);
+    http_response_code(201);
+    
 } else {
     // Метод не разрешён
     http_response_code(405);
