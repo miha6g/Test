@@ -1,0 +1,70 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Форма заказ</title>
+</head>
+<body>
+    <form method="POST" action="/procform.php" id="order-form">
+        <div>
+            <label>Имя</label>
+            <input type="text" name="firstname" required>
+        </div>
+        <div>
+            <label>Фамилия</label>
+            <input type="text" name="lastname" required>
+        </div>
+        <div>
+            <label>Телефон</label>
+            <input type="text" name="phone" required>
+        </div>
+        <div>
+            <input type="radio" name="person_type" value="natural_person" checked>
+            <label>Физ. лицо</label>
+            <input type="radio" name="person_type" value="legal_person">
+            <label>Юр. лицо</label>
+        </div>
+        <div>
+            <label>Номер договора</label>
+            <input type="text" name="contract_number">
+        </div>
+        <button type="submit" id="button-submit">Заказать</button>
+        <span id="error-text"></span>
+    </form>
+    <script>
+        const form = document.getElementById('order-form');
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(form);
+            let formDataObject = {};
+            formData.forEach(function (value, key) {
+                formDataObject[key] = value;
+            });
+            const json = JSON.stringify(formDataObject);
+            
+            (async function () {
+                const button = document.getElementById('button-submit');
+                button.disabled = true;
+                const response = await fetch(form.attributes.action.value, {
+                    method: form.attributes.method.value,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: json
+                });
+
+                if(response.status !== 201) {
+                    const errorText = document.getElementById('error-text');
+                    errorText.innerText = 'Ошибка';
+                } else {
+                    const answerData = await response.json();
+                    errorText.innerText = '';
+                    console.log(answerData);
+                }
+
+                button.disabled = false;
+            })();
+        });
+    </script>
+</body>
+</html>
